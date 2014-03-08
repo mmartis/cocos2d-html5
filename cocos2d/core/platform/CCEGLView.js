@@ -862,7 +862,7 @@ cc.ContainerStrategy = cc.Class.extend({
      * @param {cc.EGLView} The target view
      */
     preApply: function (view) {
-	    if(sys.os == "iOS" || sys.os == "OS X")
+	    //if(sys.os == "iOS" || sys.os == "OS X")
 		    this._adjustRetina = true;
     },
 
