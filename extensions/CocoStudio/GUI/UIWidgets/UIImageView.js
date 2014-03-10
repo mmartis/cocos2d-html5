@@ -48,7 +48,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
 
     initRenderer: function () {
         this._imageRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
     },
 
     /**
@@ -97,9 +97,10 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateRGBAToRenderer(imageRenderer);
         this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.imageTextureScaleChangedWithSize();
     },
 
@@ -110,49 +111,27 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     setTextureRect: function (rect) {
         if (!this._scale9Enabled){
             this._imageRenderer.setTextureRect(rect);
+            var locRendererSize = this._imageRenderer.getContentSize();
+            this._imageTextureSize.width = locRendererSize.width;
+            this._imageTextureSize.height = locRendererSize.height;
+            this.imageTextureScaleChangedWithSize();
         }
     },
 
-    /**
-     * Sets whether the widget should be flipped horizontally or not.
-     * @param {Boolean} flipX
-     */
-    setFlippedX: function (flipX) {
-        if (!this._scale9Enabled) {
-            this._imageRenderer.setFlippedX(flipX);
+    updateFlippedX: function () {
+        if (this._scale9Enabled) {
+            this._imageRenderer.setScaleX(this._flippedX ? -1 : 1);
+        } else {
+            this._imageRenderer.setFlippedX(this._flippedX);
         }
     },
 
-    /**
-     * override "setFlippedY" of widget.
-     * @param {Boolean} flipY
-     */
-    setFlippedY: function (flipY) {
-        if (!this._scale9Enabled) {
-            this._imageRenderer.setFlippedY(flipY);
+    updateFlippedY: function () {
+        if (this._scale9Enabled) {
+            this._imageRenderer.setScaleY(this._flippedY ? -1 : 1);
+        } else {
+            this._imageRenderer.setFlippedY(this._flippedY);
         }
-    },
-
-    /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        if (this._scale9Enabled)
-            return false;
-        else
-            return this._imageRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        if (this._scale9Enabled)
-            return false;
-        else
-            return this._imageRenderer.isFlippedY();
     },
 
     /**
@@ -166,7 +145,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
 
 
         this._scale9Enabled = able;
-        cc.NodeRGBA.prototype.removeChild.call(this, this._imageRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._imageRenderer, true);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
             this._imageRenderer = cc.Scale9Sprite.create();
@@ -175,7 +154,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -285,6 +264,18 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
                 this._imageRenderer.setScaleY(scaleY);
             }
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._imageRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._imageRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._imageRenderer);
     },
 
     /**

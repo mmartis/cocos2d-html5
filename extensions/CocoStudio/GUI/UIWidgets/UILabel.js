@@ -62,7 +62,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
 
     initRenderer: function () {
         this._labelRenderer = cc.LabelTTF.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelRenderer, ccs.LABELRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._labelRenderer, ccs.LABELRENDERERZ, -1);
     },
 
     /**
@@ -226,62 +226,12 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
 
     },
 
-    /**
-     * set scale
-     * @param {Number} scale
-     */
-    setScale: function (scale) {
-        ccs.Widget.prototype.setScale.call(this, scale);
+    updateFlippedX: function () {
+        this._labelRenderer.setFlippedX(this._flippedX);
     },
 
-    /**
-     * set scaleX
-     * @param {Number} scaleX
-     */
-    setScaleX: function (scaleX) {
-        ccs.Widget.prototype.setScaleX.call(this, scaleX);
-        this._normalScaleValueX = scaleX;
-    },
-
-    /**
-     * set scaleY
-     * @param {Number} scaleY
-     */
-    setScaleY: function (scaleY) {
-        ccs.Widget.prototype.setScaleY.call(this, scaleY);
-        this._normalScaleValueY = scaleY;
-    },
-
-    /**
-     * override "setFlippedX" of widget.
-     * @param {Boolean} flipX
-     */
-    setFlippedX: function (flipX) {
-        this._labelRenderer.setFlippedX(flipX);
-    },
-
-    /**
-     * override "setFlippedY" of widget.
-     * @param {Boolean} flipY
-     */
-    setFlippedY: function (flipY) {
-        this._labelRenderer.setFlippedY(flipY);
-    },
-
-    /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        return this._labelRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        return this._labelRenderer.isFlippedY();
+    updateFlippedY: function () {
+        this._labelRenderer.setFlippedY(this._flippedY);
     },
 
     /**
@@ -341,6 +291,18 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
             this._normalScaleValueX = scaleX;
             this._normalScaleValueY = scaleY;
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._labelRenderer);
     },
 
     /**
